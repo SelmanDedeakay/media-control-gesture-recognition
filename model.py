@@ -1,7 +1,6 @@
 from sklearn.model_selection import train_test_split
 import pandas as pd
 
-import numpy as np
 from sklearn import metrics
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
@@ -27,35 +26,48 @@ x_train, x_test, y_train, y_test = train_test_split(
     X_right, Y_right, test_size=0.10)
 
 
-# model = KNeighborsClassifier()
-# model = RandomForestClassifier(n_estimators=100)
-# model = DecisionTreeClassifier(criterion="gini")
-model = LogisticRegression(multi_class="ovr")
-# model = SVC(decision_function_shape="ovo",class_weight="balanced")
-model.fit(x_train.values, y_train)
+dct = {"Nearest Neighbors (k=5)":KNeighborsClassifier(),
+        "Random Forest (Estimators = 100)": RandomForestClassifier(n_estimators=100),
+        "Decision Tree": DecisionTreeClassifier(criterion="gini"),
+        "Logistic Regression":LogisticRegression(multi_class="ovr"),
+        "Support Vector Machine (SVM)":SVC(decision_function_shape="ovo",class_weight="balanced")}
 
-y_pred = model.predict(x_train.values)
-print(metrics.accuracy_score(y_train, y_pred))
-y_pred = model.predict(x_test.values)
-print(metrics.accuracy_score(y_test, y_pred))
+print("For Model Right")
+best_test = 0
+best_model = None
+for i in dct:
+    model  = dct[i]
+    model.fit(x_train.values, y_train)
+    y_pred = model.predict(x_train.values)
+    print(f"{i} train: {metrics.accuracy_score(y_train, y_pred)}")
+    y_pred = model.predict(x_test.values)
+    print(f"{i} test: {metrics.accuracy_score(y_test, y_pred)}")
+    if best_test<metrics.accuracy_score(y_test, y_pred):
+        best_model = i
+print("Best model for right : "+best_model)
 
 
 filename = 'model_right.sav'
-pickle.dump(model, open(filename, 'wb'))
+pickle.dump(dct[best_model], open(filename, 'wb'))
 
 # For left hand
-
+print("For Model Left")
 x_train, x_test, y_train, y_test = train_test_split(
     X_left, Y_left, test_size=0.05)
 
-model = KNeighborsClassifier()
-# model = LogisticRegression(multi_class="ovr")
-# model = SVC(decision_function_shape="ovo",class_weight="balanced")
-model.fit(x_train.values, y_train)
+best_test = 0
+best_model = None
+for i in dct:
+    model  = dct[i]
+    model.fit(x_train.values, y_train)
+    y_pred = model.predict(x_train.values)
+    print(f"{i} train: {metrics.accuracy_score(y_train, y_pred)}")
+    y_pred = model.predict(x_test.values)
+    print(f"{i} test: {metrics.accuracy_score(y_test, y_pred)}")
+    if best_test<metrics.accuracy_score(y_test, y_pred):
+        best_model = i
+print("Best model for left : "+best_model)
 
-y_pred = model.predict(x_train.values)
-print(metrics.accuracy_score(y_train, y_pred))
-y_pred = model.predict(x_test.values)
-print(metrics.accuracy_score(y_test, y_pred))
+
 filename = 'model_left.sav'
-pickle.dump(model, open(filename, 'wb'))
+pickle.dump(dct[best_model], open(filename, 'wb'))
