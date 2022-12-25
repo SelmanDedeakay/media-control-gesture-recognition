@@ -1,0 +1,6 @@
+mediapipe
+pyautogui
+winsdk
+scikit-learn
+pandas
+cvzone

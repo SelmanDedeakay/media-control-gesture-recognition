@@ -8,7 +8,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 matplotlib.use('TkAgg')
-
 import numpy as np
 IMAGE_FILES = [i for i in glob("data/*/*")]
 classList = {"hand_closed":0,"hand_open":1,"sound_off":2,"sound_on":3,"next_track":4,"prev_track":5}
@@ -56,7 +55,7 @@ with mp_hands.Hands(
     for i in classList:
       if i in file:
         img_count[i]+=1
-        if img_count[i] >=600:
+        if img_count[i] >=800:
             completed.append(i)
         keypoints.append(classList[i])
         break

@@ -46,24 +46,24 @@ with mp_hands.Hands(
                         cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255))
     if not success:
       print("Ignoring empty camera frame.")
-      # If loading a video, use 'break' instead of 'continue'.
       continue
-
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
+    
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = hands.process(image)
 
-    # Draw the hand annotations on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     
     if results.multi_hand_landmarks:
       for idx, hand_handedness in enumerate(results.multi_handedness):
         hand = hand_handedness.classification[0].label
-
+      
       for hand_landmarks in results.multi_hand_landmarks:
+        mp_drawing.draw_landmarks(
+            image,
+            hand_landmarks,
+            mp_hands.HAND_CONNECTIONS)
         keypoints = []
         wrist_point =0
         counter = 1
@@ -80,20 +80,18 @@ with mp_hands.Hands(
         keypoints = preprocessing.normalize([keypoints])
         keypoints = keypoints.tolist()[0]
         if hand.lower() =="left":
-            print("Using left hand")
             result = model_left.predict(np.reshape(keypoints,(1,-1)))[0]
         else: 
-            print("Using right hand")
             result = model_right.predict(np.reshape(keypoints,(1,-1)))[0]
 
         if trust>20: 
             if last_gesture == 0 and (flag):     
                 pyautogui.press("playpause")
-                print("PAUSE")
+                
                 flag=False
             elif last_gesture == 1 and not (flag):     
                 pyautogui.press("playpause")
-                print("PLAY")
+                
                 flag=True
             elif last_gesture == 2:
                 pyautogui.press("volumedown")
@@ -103,20 +101,17 @@ with mp_hands.Hands(
                 trust= 15
             elif last_gesture == 4:
                 pyautogui.press("nexttrack")
-                trust= 0
+                trust= 10
             elif last_gesture == 5:     
                 pyautogui.press("prevtrack")
-                trust= 0
+                trust= 10
 
-                
         if result == last_gesture:
             trust+=1
         else:
             last_gesture=result
             trust=0
 
-                               
-            
     cv2.imshow('MediaPipe Hands', image)
     key_pressed = cv2.waitKey(1) & 0xFF
     if key_pressed == ord('q'):
