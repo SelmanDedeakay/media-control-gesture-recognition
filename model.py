@@ -23,7 +23,7 @@ X_left = X_left.drop(["Class"], axis=1)
 # For right hand
 
 x_train, x_test, y_train, y_test = train_test_split(
-    X_right, Y_right, test_size=0.10)
+    X_right, Y_right, test_size=0.2)
 
 
 dct = {"Nearest Neighbors (k=5)":KNeighborsClassifier(),
@@ -53,7 +53,7 @@ pickle.dump(dct[best_model], open(filename, 'wb'))
 # For left hand
 print("For Model Left")
 x_train, x_test, y_train, y_test = train_test_split(
-    X_left, Y_left, test_size=0.05)
+    X_left, Y_left, test_size=0.2)
 
 best_test = 0
 best_model = None

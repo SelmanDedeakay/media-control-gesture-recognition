@@ -119,21 +119,28 @@ with mp_hands.Hands(
                         np.reshape(keypoints, (1, -1)))[0]
                     result_right = model_right.predict(
                         np.reshape(keypoints, (1, -1)))[0]
+                    if (result_left == 3 and result_right == 1): result = 6
+                    elif (result_left == 2 and result_right == 0): result = 7
                     
-                    if (result_left == 3 and result_right == 1) and volume:
-                        last_gesture = 6
-                        pyautogui.press("volumemute")
-                        volume = False
-                    elif (result_left == 2 and result_right == 0) and not volume:
-                        last_gesture = 7
-                        pyautogui.press("volumemute")
-                        volume = True
-
+                    if trust>5:
+                        if last_gesture == 6 and volume:
+                            pyautogui.press("volumemute")
+                            trust = 0
+                            volume = False
+                        elif last_gesture == 7 and not volume:
+                            trust = 0
+                            pyautogui.press("volumemute")
+                            volume = True
+                    if result == last_gesture:
+                        trust += 1
+                    else:
+                        last_gesture = result
+                        trust = 0
                 else:
                     if hand.lower() == "left":
                         result = model_left.predict(
                             np.reshape(keypoints, (1, -1)))[0]
-                    else:
+                    elif hand.lower() == "right":
                         result = model_right.predict(
                             np.reshape(keypoints, (1, -1)))[0]
 
