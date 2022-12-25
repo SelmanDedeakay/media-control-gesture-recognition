@@ -7,7 +7,7 @@ This application aims to recognize hand gestures and execute the media control c
 - Media Play/Pause
 - Volume Increase/Decrease
 - Changing to the Previous/Next Track
-
+- Mute/Unmute
 ### Recognition
 
 For recognition, we are using the landmark points provided by **MediaPipe Hands** module. 
