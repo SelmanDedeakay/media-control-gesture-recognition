@@ -4,3 +4,4 @@ winsdk
 scikit-learn
 pandas
 cvzone
+pyaudio
